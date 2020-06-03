@@ -46,3 +46,9 @@ v2ray下载地址：https://github.com/2dust/v2rayN/releases
 ### 运行v2ray
 点击load core， 点击PAC模式
 ![v2ray](images/v2ray2.png 'v2ray配置2')
+
+
+### 修改PAC配置
+
+有时候github上面图片显示不出来，可以修改PAC配置
+添加一行：".githubusercontent.com"
