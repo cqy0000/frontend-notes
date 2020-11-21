@@ -94,8 +94,8 @@ JWT令牌一般存储在sessionStorage、localStorage里，通过HTTP的`Authori
 
 
 参考资料：
-[Cookie防篡改机制](https://juejin.cn/post/6844903608618598407)
-[常见登录认证 DEMO](https://juejin.cn/post/6844903895710302221)
-[简单了解JWT](https://juejin.cn/post/6844904170072309768)
-[理解OAuth 2.0](http://www.ruanyifeng.com/blog/2014/05/oauth_2_0.html)
-[扫码登陆原理简析](https://www.cnblogs.com/54chensongxia/p/12530268.html)
+* [Cookie防篡改机制](https://juejin.cn/post/6844903608618598407)
+* [常见登录认证 DEMO](https://juejin.cn/post/6844903895710302221)  
+* [简单了解JWT](https://juejin.cn/post/6844904170072309768)
+* [理解OAuth 2.0](http://www.ruanyifeng.com/blog/2014/05/oauth_2_0.html)
+* [扫码登陆原理简析](https://www.cnblogs.com/54chensongxia/p/12530268.html)
