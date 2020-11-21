@@ -42,7 +42,10 @@ JWT令牌一般存储在sessionStorage、localStorage里，通过HTTP的`Authori
 
 优点：
 
-1. 服务器不需要保存令牌或当前session的记录，不管跨域还是集群，都可以获取用户信息
+1. 无状态、可扩展：客户端存储的Token是无状态的，服务器不需要保存令牌或当前session的记录，不管跨域还是集群，都可以获取用户信息
+2. 安全性：防止CSRF(跨站请求伪造)，即使客户端使用cookie存储token，cookie也仅仅是一个存储机制而不是用于认证。token说是有时效的，一段时间之后用户需要重新验证。如果想要撤回token，也可以通过token revocation使token无效。
+3. 可扩展性：token能够创建与其他程序共享权限的程序。token可以提供可选的权限给第三方应用程序，当用户想让另一个应用程序访问他们的数据，我们可以通过建立自己的API，得出特殊权限的tokens
+4. 多平台跨域：只要用户有一个通过了验证的token，数据和资源就能够在任何域(CDN)上被请求到。
 
 注意点：
 
@@ -70,7 +73,24 @@ JWT令牌一般存储在sessionStorage、localStorage里，通过HTTP的`Authori
 
 ##### 扫码登录
 
-todo
+流程(以微信为例)：
+
+* 获取二维码
+  * 网站请求登陆二维码：网站服务器向微信API传入带有回调url, AppID和AppSecret等参数。 （web端的服务器收到用户申请登陆二维码的请求后，会随机生成一个uuid作为整个页面的唯一标志，并将这个uuid当做一个键值对的key存在redis服务器上，而且这个键值对必须设置一个过期时间，不然的话拿这个uuid登陆一次之后就会一直处于登陆状态了。）
+  * 微信开发平台对AppID等参数进行验证，将这个uuid和本公司的验证字符串合在一起通过二维码生成接口，生成一个二维码的图片。将二维码图片和uuid一起返回给用户浏览器。
+
+* 浏览器判断扫码和授权
+  * 浏览器拿到uuid和二维码后，每隔一段时间拿这个uuid不断去后台轮询是否已经扫码
+  * 当手机扫码之后，再轮询是否已经确认授权成功。（主要是判断redis中uuid-userid键值对是否存在）
+
+* 微信客户端授权登录
+  * 用户扫描二维码，会得到一个验证信息和uuid，然后手机端会将解析到的数据加上用户的token作为参数，向服务器发送验证登录请求。微信服务器会先用当前token判断用户是否合法，是否已经正常登陆。
+  * 手机端收到返回后，将登录确认框显示给用户。用户点击确认登录之后，服务器拿到uuid和usid，将用户的usid作为value存入redis中对应的uuid键中。
+
+* 登陆成功后
+  * 二维码页面跳转至之前传入的回调url，并带上授权临时票据code
+  * 后台通过code加上appid和appsecret换取access_token
+  * 微信返回access_token，其中带有openid就是授权用户的唯一标志
 
 
 参考资料：
@@ -78,3 +98,4 @@ todo
 [常见登录认证 DEMO](https://juejin.cn/post/6844903895710302221)
 [简单了解JWT](https://juejin.cn/post/6844904170072309768)
 [理解OAuth 2.0](http://www.ruanyifeng.com/blog/2014/05/oauth_2_0.html)
+[扫码登陆原理简析](https://www.cnblogs.com/54chensongxia/p/12530268.html)
